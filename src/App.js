@@ -12,6 +12,15 @@ class App extends React.Component {
     this.handleImageChange = this.handleImageChange.bind(this);
     this.handleZoomIn = this.handleZoomIn.bind(this);
     this.handleZoomOut = this.handleZoomOut.bind(this);
+    this.handleMouseWheel = this.handleMouseWheel.bind(this);
+  }
+
+  handleMouseWheel(e) {
+    if (e.deltaY < 0) {
+      this.handleZoomIn();
+    } else {
+      this.handleZoomOut();
+    }
   }
 
   handleImageChange(e) {
@@ -21,18 +30,18 @@ class App extends React.Component {
       this.setState({
         image: reader.result,
       });
-      var myImage = new Image();
+      const myImage = new Image();
       myImage.src = reader.result;
       myImage.onload = function () {
-        var canvas = document.getElementById('canvas');
-        var ctx = canvas.getContext('2d');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
         canvas.width = 640;
         canvas.height = 480;
-        var ratioX = canvas.width / myImage.width;
-        var ratioY = canvas.height / myImage.height;
-        var ratio = Math.min(ratioX, ratioY);
-        var xCenter = (canvas.width - myImage.width * ratio) / 2;
-        var yCenter = (canvas.height - myImage.height * ratio) / 2;
+        const ratioX = canvas.width / myImage.width;
+        const ratioY = canvas.height / myImage.height;
+        const ratio = Math.min(ratioX, ratioY);
+        const xCenter = (canvas.width - myImage.width * ratio) / 2;
+        const yCenter = (canvas.height - myImage.height * ratio) / 2;
         ctx.drawImage(myImage, xCenter, yCenter, myImage.width * ratio, myImage.height * ratio);
       }
     }, false);
@@ -42,20 +51,20 @@ class App extends React.Component {
   }
 
   handleZoomIn() {
-    var zoom = this.state.zoom;
+    const zoom = this.state.zoom;
     this.setState({
       zoom: this.state.zoom + 0.1,
     });
     console.log(this.state.zoom);
-    var canvas = document.getElementById('canvas');
-    var ctx = canvas.getContext('2d');
-    var myImage = new Image();
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const myImage = new Image();
     myImage.src = this.state.image;
-    var ratioX = canvas.width / myImage.width * zoom;
-    var ratioY = canvas.height / myImage.height * zoom;
-    var ratio = Math.min(ratioX, ratioY);
-    var xCenter = (canvas.width - myImage.width * ratio) / 2;
-    var yCenter = (canvas.height - myImage.height * ratio) / 2;
+    const ratioX = canvas.width / myImage.width * zoom;
+    const ratioY = canvas.height / myImage.height * zoom;
+    const ratio = Math.min(ratioX, ratioY);
+    const xCenter = (canvas.width - myImage.width * ratio) / 2;
+    const yCenter = (canvas.height - myImage.height * ratio) / 2;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(myImage, xCenter, yCenter, myImage.width * ratio, myImage.height * ratio);
   }
@@ -65,16 +74,16 @@ class App extends React.Component {
       zoom: this.state.zoom - 0.1,
     });
     console.log(this.state.zoom);
-    var zoom = this.state.zoom;
-    var canvas = document.getElementById('canvas');
-    var ctx = canvas.getContext('2d');
-    var myImage = new Image();
+    const zoom = this.state.zoom;
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const myImage = new Image();
     myImage.src = this.state.image;
-    var ratioX = canvas.width / myImage.width * zoom;
-    var ratioY = canvas.height / myImage.height * zoom;
-    var ratio = Math.min(ratioX, ratioY);
-    var xCenter = (canvas.width - myImage.width * ratio) / 2;
-    var yCenter = (canvas.height - myImage.height * ratio) / 2;
+    const ratioX = canvas.width / myImage.width * zoom;
+    const ratioY = canvas.height / myImage.height * zoom;
+    const ratio = Math.min(ratioX, ratioY);
+    const xCenter = (canvas.width - myImage.width * ratio) / 2;
+    const yCenter = (canvas.height - myImage.height * ratio) / 2;
     if (zoom > 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(myImage, xCenter, yCenter, myImage.width * ratio, myImage.height * ratio);
@@ -89,7 +98,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <div>
-          <canvas id='canvas' style={{ width: '640px', height: '480px', border: '1px solid black' }}></canvas>
+          <canvas id='canvas' style={{ width: '640px', height: '480px', border: '1px solid black' }} onWheel={this.handleMouseWheel}></canvas>
           <Upload
             handleImageChange={this.handleImageChange}
           />
