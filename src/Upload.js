@@ -9,7 +9,7 @@ class Upload extends React.Component {
   render() {
     return (
       <div>
-        {this.props.image == '' ? <input type='file' accept='image/*' onChange={this.props.handleImageChange} ref={this.myRef} /> : null}
+        {this.props.image === '' ? <input type='file' accept='image/*' onChange={this.props.handleImageChange} ref={this.myRef} /> : null}
       </div>
     );
   }
