@@ -51,6 +51,8 @@ class App extends React.Component {
   }
 
   handleZoomIn() {
+    console.log(this.state.zoom);
+
     this.state.zoom += 0.1;
     const zoom = this.state.zoom;
     console.log(this.state.zoom);
@@ -84,9 +86,8 @@ class App extends React.Component {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(myImage, xCenter, yCenter, myImage.width * ratio, myImage.height * ratio);
     } else {
-      this.setState({
-        zoom: 0,
-      });
+      this.state.zoom = 0;
+      console.log(this.state.zoom);
     }
   }
 
