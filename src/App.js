@@ -80,7 +80,7 @@ class App extends React.Component {
     const ratio = Math.min(ratioX, ratioY);
     const xCenter = (canvas.width - myImage.width * ratio) / 2;
     const yCenter = (canvas.height - myImage.height * ratio) / 2;
-    if (zoom > 0) {
+    if (zoom >= 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(myImage, xCenter, yCenter, myImage.width * ratio, myImage.height * ratio);
     } else {
