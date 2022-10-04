@@ -51,10 +51,8 @@ class App extends React.Component {
   }
 
   handleZoomIn() {
+    this.state.zoom += 0.1;
     const zoom = this.state.zoom;
-    this.setState({
-      zoom: this.state.zoom + 0.1,
-    });
     console.log(this.state.zoom);
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -70,9 +68,7 @@ class App extends React.Component {
   }
 
   handleZoomOut() {
-    this.setState({
-      zoom: this.state.zoom - 0.1,
-    });
+    this.state.zoom -= 0.1;
     console.log(this.state.zoom);
     const zoom = this.state.zoom;
     const canvas = document.getElementById('canvas');
@@ -101,9 +97,10 @@ class App extends React.Component {
           <canvas id='canvas' style={{ width: '640px', height: '480px', border: '1px solid black' }} onWheel={this.handleMouseWheel}></canvas>
           <Upload
             handleImageChange={this.handleImageChange}
+            image={this.state.image}
           />
-          <button type="button" style={{ width: '100px' }} onClick={this.handleZoomIn}>zoom in</button>
-          <button type="button" style={{ width: '100px' }} onClick={this.handleZoomOut}>zoom out</button>
+          {this.state.image !== '' ? <button type="button" style={{ width: '100px' }} onClick={this.handleZoomIn}>Zoom In</button> : null}
+          {this.state.image !== '' ? <button type="button" style={{ width: '100px' }} onClick={this.handleZoomOut}>Zoom Out</button> : null}
         </div>
       </div>
     );
