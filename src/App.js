@@ -5,38 +5,31 @@ import React from 'react';
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.zoom = 1;
     this.state = {
-      zoom: 1,
       image: '',
     };
+    this.canvasTag = React.createRef();
     this.handleImageChange = this.handleImageChange.bind(this);
+    this.handleMouseWheel = this.handleMouseWheel.bind(this);
     this.handleZoomIn = this.handleZoomIn.bind(this);
     this.handleZoomOut = this.handleZoomOut.bind(this);
-    this.handleMouseWheel = this.handleMouseWheel.bind(this);
-  }
-
-  handleMouseWheel(e) {
-    if (e.deltaY < 0) {
-      this.handleZoomIn();
-    } else {
-      this.handleZoomOut();
-    }
   }
 
   handleImageChange(e) {
     const file = e.target.files[0];
     const reader = new FileReader();
+    const canvas = this.canvasTag.current;
+    const ctx = canvas.getContext('2d');
+    canvas.width = 640;
+    canvas.height = 480;
+    const myImage = new Image();
     reader.addEventListener("load", () => {
       this.setState({
         image: reader.result,
       });
-      const myImage = new Image();
       myImage.src = reader.result;
       myImage.onload = function () {
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = 640;
-        canvas.height = 480;
         const ratioX = canvas.width / myImage.width;
         const ratioY = canvas.height / myImage.height;
         const ratio = Math.min(ratioX, ratioY);
@@ -50,58 +43,62 @@ class App extends React.Component {
     }
   }
 
-  handleZoomIn() {
-    console.log(this.state.zoom);
+  handleMouseWheel(e) {
+    if (e.deltaY < 0) {
+      this.handleZoomIn();
+    } else {
+      this.handleZoomOut();
+    }
+  }
 
-    this.state.zoom += 0.1;
-    const zoom = this.state.zoom;
-    console.log(this.state.zoom);
-    const canvas = document.getElementById('canvas');
+  handleZoomIn() {
+    this.zoom += 0.1;
+    const canvas = this.canvasTag.current;
     const ctx = canvas.getContext('2d');
     const myImage = new Image();
     myImage.src = this.state.image;
-    const ratioX = canvas.width / myImage.width * zoom;
-    const ratioY = canvas.height / myImage.height * zoom;
+    const ratioX = canvas.width / myImage.width * this.zoom;
+    const ratioY = canvas.height / myImage.height * this.zoom;
     const ratio = Math.min(ratioX, ratioY);
     const xCenter = (canvas.width - myImage.width * ratio) / 2;
     const yCenter = (canvas.height - myImage.height * ratio) / 2;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(myImage, xCenter, yCenter, myImage.width * ratio, myImage.height * ratio);
+    myImage.onload = function () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(myImage, xCenter, yCenter, myImage.width * ratio, myImage.height * ratio);
+    };
   }
 
   handleZoomOut() {
-    this.state.zoom -= 0.1;
-    console.log(this.state.zoom);
-    const zoom = this.state.zoom;
-    const canvas = document.getElementById('canvas');
+    this.zoom -= 0.1;
+    const canvas = this.canvasTag.current;
     const ctx = canvas.getContext('2d');
     const myImage = new Image();
     myImage.src = this.state.image;
-    const ratioX = canvas.width / myImage.width * zoom;
-    const ratioY = canvas.height / myImage.height * zoom;
+    const ratioX = canvas.width / myImage.width * this.zoom;
+    const ratioY = canvas.height / myImage.height * this.zoom;
     const ratio = Math.min(ratioX, ratioY);
     const xCenter = (canvas.width - myImage.width * ratio) / 2;
     const yCenter = (canvas.height - myImage.height * ratio) / 2;
-    if (zoom >= 0) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(myImage, xCenter, yCenter, myImage.width * ratio, myImage.height * ratio);
-    } else {
-      this.state.zoom = 0;
-      console.log(this.state.zoom);
-    }
+    myImage.onload = function () {
+      if (this.zoom >= 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(myImage, xCenter, yCenter, myImage.width * ratio, myImage.height * ratio);
+      } else {
+        this.zoom = 0;
+      }
+    }.bind(this);
   }
 
   render() {
     return (
       <div className="App">
         <div>
-          <canvas id='canvas' style={{ width: '640px', height: '480px', border: '1px solid black' }} onWheel={this.handleMouseWheel}></canvas>
-          <Upload
-            handleImageChange={this.handleImageChange}
-            image={this.state.image}
-          />
-          {this.state.image !== '' ? <button type="button" style={{ width: '100px' }} onClick={this.handleZoomIn}>Zoom In</button> : null}
-          {this.state.image !== '' ? <button type="button" style={{ width: '100px' }} onClick={this.handleZoomOut}>Zoom Out</button> : null}
+          <canvas id='canvas' style={{ width: '640px', height: '480px', border: '1px solid black' }} onWheel={this.handleMouseWheel} ref={this.canvasTag}></canvas>
+          {this.state.image === '' ? <Upload handleImageChange={this.handleImageChange} image={this.state.image} /> : null}
+          <div>
+            {this.state.image !== '' ? <button type="button" style={{ width: '100px' }} onClick={this.handleZoomIn}>Zoom In</button> : null}
+            {this.state.image !== '' ? <button type="button" style={{ width: '100px' }} onClick={this.handleZoomOut}>Zoom Out</button> : null}
+          </div>
         </div>
       </div>
     );
