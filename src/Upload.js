@@ -8,7 +8,7 @@ class Upload extends React.Component {
   render() {
     return (
       <div>
-        <input type='file' accept='image/*' onChange={this.props.handleImageChange} />
+        <input type='file' accept='image/*' onChange={this.props.handleUploadImage}/>
       </div>
     );
   }
